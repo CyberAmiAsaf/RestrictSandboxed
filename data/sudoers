@@ -1,0 +1,2 @@
+Cmnd_Alias USERS = /usr/sbin/useradd, /usr/sbin/userdel, /usr/sbin/groupadd
+rsudo ALL=NOPASSWD: USERS
