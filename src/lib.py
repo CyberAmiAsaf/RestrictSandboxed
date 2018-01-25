@@ -2,7 +2,7 @@ import utils
 import consts
 import logging
 
-logging.getLogger().setLevel(logging.INFO)
+logging.basicConfig(format='%(levelname)s [%(asctime)s]: %(message)s', level=logging.DEBUG)
 
 
 class ProcessPremissionManager(object):
