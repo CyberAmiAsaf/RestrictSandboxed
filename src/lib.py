@@ -2,9 +2,11 @@ import utils
 import consts
 import logging
 
+logging.getLogger().setLevel(logging.INFO)
+
 
 class ProcessPremissionManager(object):
-    def __init__(user=None, group=consts.GROUP_DEFAULT):
+    def __init__(self, user=None, group=consts.GROUP_DEFAULT):
         """
         :type user: str | None
         :type group: str
