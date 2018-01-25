@@ -1,0 +1,1 @@
+GROUP_DEFAULT = 'restrictes_sandbox_users'
