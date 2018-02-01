@@ -1,11 +1,17 @@
-import utils
-import consts
+"""
+Main library file
+"""
 import logging
+from . import utils
+from . import consts
 
 logging.basicConfig(format='%(levelname)s [%(asctime)s]: %(message)s', level=logging.DEBUG)
 
 
 class ProcessPremissionManager(object):
+    """
+    A resticrtable user
+    """
     def __init__(self, user=None, group=consts.GROUP_DEFAULT):
         """
         :type user: str | None
