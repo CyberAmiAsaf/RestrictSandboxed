@@ -1,3 +1,5 @@
 #!/bin/sh
 . `dirname $0`/util.sh
-envexec pipenv run python -m src
+initilize
+pipenv run python -m src
+finalize

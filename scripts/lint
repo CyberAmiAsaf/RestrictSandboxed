@@ -1,3 +1,5 @@
 #!/bin/sh
 . `dirname $0`/util.sh
-envexec pipenv run pylint src tests tools --rcfile config/pylintrc
+initilize
+pipenv run pylint src tests tools --rcfile config/pylintrc
+finalize

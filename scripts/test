@@ -1,3 +1,5 @@
 #!/bin/sh
 . `dirname $0`/util.sh
-envexec pipenv run pytest
+initilize
+pipenv run pytest
+finalize
