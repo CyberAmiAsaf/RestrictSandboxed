@@ -1,1 +1,1 @@
-GROUP_DEFAULT = 'restrictes_sandbox_users'
+GROUP_DEFAULT = 'restricted_sandbox_users'
