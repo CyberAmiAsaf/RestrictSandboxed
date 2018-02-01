@@ -1,0 +1,7 @@
+#!/bin/sh
+. `dirname $0`/util.sh
+initilize
+
+rm -fv /etc/sudoers.d/restrictsandbox
+
+finalize
