@@ -2,6 +2,9 @@
 . `dirname $0`/util.sh
 initilize
 
+echo =\> Creating user
+useradd restrictsandbox
+echo =\> Linking sudoers
 ln -sv data/sudoers /etc/sudoers.d/restrictsandbox
 
 finalize

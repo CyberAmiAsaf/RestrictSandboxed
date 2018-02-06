@@ -8,3 +8,11 @@ initilize() {
 finalize() {
     cd $PWD
 }
+
+run() {
+    pipenv run $@
+}
+
+run_su() {
+    run sudo -u restrictsandbox $@
+}
