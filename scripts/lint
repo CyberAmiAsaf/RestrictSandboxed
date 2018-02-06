@@ -1,5 +1,5 @@
 #!/bin/sh
 . `dirname $0`/util.sh
 initilize
-pipenv run pylint src tests tools --rcfile config/pylintrc
+pipenv run pylint src tests tools --rcfile config/pylintrc $@
 finalize

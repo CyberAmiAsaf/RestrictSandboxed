@@ -1,5 +1,5 @@
 #!/bin/sh
 . `dirname $0`/util.sh
 initilize
-pipenv run pytest
+pipenv run pytest $@
 finalize
