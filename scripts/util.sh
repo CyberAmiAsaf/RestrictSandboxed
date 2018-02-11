@@ -1,18 +1,11 @@
 initilize() {
     PWD=`pwd`
-    DIRNAME=`dirname $0`
-    BASE=$DIRNAME/..
+    BASE=`dirname $0`/..
+
+    set -e
     cd $BASE
 }
 
 finalize() {
     cd $PWD
-}
-
-run() {
-    pipenv run $@
-}
-
-run_su() {
-    run sudo -u restrictsandbox $@
 }

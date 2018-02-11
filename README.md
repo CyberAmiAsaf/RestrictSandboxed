@@ -1,4 +1,5 @@
 # Restrcit
+[![Build Status](https://img.shields.io/travis/CyberAmiAsaf/DekelYigal-RestrictSandboxed/master.svg?style=for-the-badge)](https://travis-ci.org/CyberAmiAsaf/DekelYigal-RestrictSandboxed)
 
 Sandboxed processes manager
 
@@ -10,20 +11,20 @@ These instructions will get you a copy of the project up and running on your loc
 
 * Linux
 * [Python 2.7](https://www.python.org/downloads/)
-* [Pipenv](http://pipenv.readthedocs.io)
 
 ### Installing
 
 ```sh
-pipenv install
-sudo ./scripts/install
+pip install -e .
+chmod -R +x scripts
 ```
 
 ## Running the tests
 
 ```sh
-pipenv install -d
-./scripts/tests
+pip install -e .[test]
+./scripts/lint
+sudo ./scripts/test
 ```
 
 ## Authors
