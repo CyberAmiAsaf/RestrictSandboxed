@@ -1,6 +1,8 @@
 language: python
 sudo: true
-python: '2.7'
+python:
+  - '2.7'
+  - '3'
 
 before_install: chmod -R +x scripts
 install: pip install -e .[test]
