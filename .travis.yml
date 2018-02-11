@@ -2,11 +2,8 @@ language: python
 sudo: true
 python: '2.7'
 
-before_install:
-  - chmod -R +x scripts
-
-install:
-  - pip install -e .[test]
+before_install: chmod -R +x scripts
+install: pip install -e .[test]
 
 script:
   - ./scripts/lint
