@@ -2,7 +2,7 @@ language: python
 sudo: true
 python:
   - '2.7'
-  - '3'
+  - '3.6'
 
 before_install: chmod -R +x scripts
 install: pip install -e .[test]
