@@ -4,7 +4,8 @@ initilize
 
 echo =\> Creating user
 useradd restrictsandbox
-echo =\> Linking sudoers
-ln -sv data/sudoers /etc/sudoers.d/restrictsandbox
+echo =\> Creating sudoers
+cp -v data/sudoers /etc/sudoers.d/restrictsandbox
+chown -v root:root /etc/sudoers.d/restrictsandbox
 
 finalize
