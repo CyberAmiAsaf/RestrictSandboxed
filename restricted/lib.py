@@ -8,7 +8,7 @@ from . import consts
 logging.basicConfig(format='%(levelname)s [%(asctime)s]: %(message)s', level=logging.DEBUG)
 
 
-class ProcessPremissionManager(object):
+class User(object):
     """
     A resticrtable user
     """
