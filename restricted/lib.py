@@ -21,3 +21,5 @@ class User(object):
         self.group = group
 
         logging.info('Created user %s of group %s', self.user, self.group)
+
+__all__ = ['User']
