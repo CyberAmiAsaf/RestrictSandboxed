@@ -3,4 +3,5 @@ Main CLI Interface
 """
 from . import lib
 
-lib.ProcessPremissionManager()
+if __name__ == '__main__':
+    lib.User()
