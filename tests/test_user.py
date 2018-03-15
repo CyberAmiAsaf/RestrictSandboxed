@@ -12,7 +12,10 @@ def test_user_creation():
     Test user creation
     """
     user = restricted.User()
-    assert pwd.getpwnam(user.user), 'User was not created'
+    try:
+        pwd.getpwnam(user.user)
+    except KeyError:
+        pytest.fail('User was not created')
 
 
 def test_user_deletion():
