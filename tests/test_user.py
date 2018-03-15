@@ -15,6 +15,20 @@ def test_user_creation():
     assert pwd.getpwnam(user.user), 'User was not created'
 
 
+def test_user_deletion():
+    user = restricted.User()
+    uname = user.user
+    
+    try:
+        pwd.getpwnam(uname)
+    except KeyError:
+        pytest.skip('User was not created')
+
+    del user
+    with pytest.raises(KeyError):
+        pwd.getpwnam(uname)
+
+
 def test_user_group():
     """
     Test user's group creation
