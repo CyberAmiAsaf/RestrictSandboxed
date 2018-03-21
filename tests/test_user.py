@@ -19,9 +19,12 @@ def test_user_creation():
 
 
 def test_user_deletion():
+    """
+    Test user deletion
+    """
     user = restricted.User()
     uname = user.user
-    
+
     try:
         pwd.getpwnam(uname)
     except KeyError:
