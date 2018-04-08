@@ -15,6 +15,14 @@ def random_str(n):
 
 
 def is_group_exists(group):
+    """
+    Check if a certian user group is exist
+
+    :param group: group name
+    :type group: str
+    :rtype: bool
+    :return: whether or not the group exists
+    """
     with open('/etc/group') as fd:
         for line in fd:  # type: str
             if line.startswith(group + ':'):
