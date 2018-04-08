@@ -40,7 +40,7 @@ def test_user_group():
     Test user's group creation
     """
     user = restricted.User()
-    assert grp.getgrgid(pwd.getpwnam(user.user).pw_gid) == grp.getgrnam(user.group)
+    assert user.user in grp.getgrnam(user.group).gr_mem
 
 
 def test_error_user_exists():
