@@ -2,7 +2,6 @@
 Main library file
 """
 import logging
-import subprocess
 from . import utils
 from . import consts
 from . import errors
@@ -26,7 +25,7 @@ class User(object):
             utils.call_wrapper(['groupadd', group])
 
         ret = utils.call_wrapper(['useradd', self.user, '-G', group])
-        
+
         if ret == 9:
             raise errors.UserExistsError
         elif ret == 1:
