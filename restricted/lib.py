@@ -4,6 +4,7 @@ Main library file
 import os
 import pwd
 import logging
+import subprocess
 from . import utils
 from . import consts
 from . import errors
@@ -32,8 +33,10 @@ class User(object):
             raise errors.UserExistsError
         elif ret == 1:
             raise errors.PremissionError
+        
+        self.set_fs_file_premission('/', '---')
 
-        logging.info('Created user %s of group %s', self.user, self.group)
+        logging.info('Created restricted user %s of group %s', self.user, self.group)
         self._executed = True
 
     def __del__(self):
@@ -55,5 +58,14 @@ class User(object):
         Set the process' UID to the user's UID
         """
         os.setuid(self.uid)
+
+    def set_fs_file_premission(self, path, mode='--r'):
+        """
+        Set file premissions of {path} to be {mode}
+
+        :param str path: path to file or directory
+        :param str mode: file premission mode
+        """
+        subprocess.check_call(['setfacl', '-m', '{}:{}'.format(self.user, mode), path])
 
 __all__ = ['User']
