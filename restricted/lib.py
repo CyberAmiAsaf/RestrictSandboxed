@@ -1,6 +1,8 @@
 """
 Main library file
 """
+import os
+import pwd
 import logging
 from . import utils
 from . import consts
@@ -38,5 +40,20 @@ class User(object):
         if not getattr(self, '_executed', False):
             return
         utils.call_wrapper(['userdel', self.user])
+
+    @property
+    def uid(self):
+        """
+        Get the UID of the user
+
+        :rtype: int
+        """
+        return pwd.getpwnam(self.user)[2]
+
+    def setuid(self):
+        """
+        Set the process' UID to the user's UID
+        """
+        os.setuid(self.uid)
 
 __all__ = ['User']
