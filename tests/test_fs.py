@@ -8,7 +8,8 @@ import py  # pylint: disable=unused-import
 import restricted
 
 
-def test_premission_denied_readable_file(tmpdir):
+@pytest.mark.parametrize('mode', ['r', 'w', 'x'])
+def test_premission_denied_accessable_file(mode, tmpdir):
     """
     Test that the restircted user can't access a normal file if the required premission is not given
 
@@ -23,4 +24,4 @@ def test_premission_denied_readable_file(tmpdir):
 
     # test
     with pytest.raises(subprocess.CalledProcessError):
-        subprocess.check_call(['sudo', '-u', user.user, 'test', '-r', str(fn)])
+        subprocess.check_call(['sudo', '-u', user.user, 'test', '-' + mode, str(fn)])
