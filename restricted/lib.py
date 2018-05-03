@@ -59,13 +59,18 @@ class User(object):
         """
         os.setuid(self.uid)
 
-    def set_fs_file_premission(self, path, mode='--r'):
+    def set_fs_file_premission(self, path, mode='-xr'):
         """
         Set file premissions of {path} to be {mode}
 
         :param str path: path to file or directory
         :param str mode: file premission mode
         """
-        subprocess.check_call(['setfacl', '-m', '{}:{}'.format(self.user, mode), path])
+        if os.path.isdir(path):
+            for root, _, files in os.walk(path):
+                for file_ in files:
+                    self.set_fs_file_premission(os.path.join(root, file_), mode)
+        else:
+            subprocess.check_call(['setfacl', '-m', '{}:{}'.format(self.user, mode), path])
 
 __all__ = ['User']
