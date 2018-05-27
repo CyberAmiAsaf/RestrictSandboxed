@@ -2,6 +2,8 @@
 Main library file
 """
 import logging
+import subprocess
+from typing import Optional
 from . import utils
 from . import consts
 from . import errors
@@ -13,18 +15,14 @@ class User(object):
     """
     A resticrtable user
     """
-    def __init__(self, user=None, group=consts.GROUP_DEFAULT):
-        """
-        :type user: str | None
-        :type group: str
-        """
+    def __init__(self, user: Optional[str] = None, group: str = consts.GROUP_DEFAULT):
         self.user = user or utils.random_str(10)
         self.group = group
 
         if not utils.is_group_exists(group):
-            utils.call_wrapper(['groupadd', group])
+            subprocess.run(['groupadd', group]).check_returncode()
 
-        ret = utils.call_wrapper(['useradd', self.user, '-G', group])
+        ret = subprocess.run(['useradd', self.user, '-G', group]).returncode
 
         if ret == 9:
             raise errors.UserExistsError
@@ -37,6 +35,6 @@ class User(object):
     def __del__(self):
         if not getattr(self, '_executed', False):
             return
-        utils.call_wrapper(['userdel', self.user])
+        subprocess.run(['userdel', self.user]).check_returncode()
 
 __all__ = ['User']

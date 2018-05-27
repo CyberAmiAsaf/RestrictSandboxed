@@ -10,7 +10,7 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 * Linux
-* [Python 2.7](https://www.python.org/downloads/)
+* [Python 3.6](https://www.python.org/downloads/)
 
 ### Installing
 
