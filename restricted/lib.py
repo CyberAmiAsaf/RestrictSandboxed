@@ -2,6 +2,7 @@
 Main library file
 """
 import logging
+import subprocess
 from . import utils
 from . import consts
 from . import errors
@@ -22,9 +23,9 @@ class User(object):
         self.group = group
 
         if not utils.is_group_exists(group):
-            utils.call_wrapper(['groupadd', group])
+            subprocess.run(['groupadd', group]).check_returncode()
 
-        ret = utils.call_wrapper(['useradd', self.user, '-G', group])
+        ret = subprocess.run(['useradd', self.user, '-G', group]).returncode
 
         if ret == 9:
             raise errors.UserExistsError
@@ -37,6 +38,6 @@ class User(object):
     def __del__(self):
         if not getattr(self, '_executed', False):
             return
-        utils.call_wrapper(['userdel', self.user])
+        subprocess.run(['userdel', self.user]).check_returncode()
 
 __all__ = ['User']
