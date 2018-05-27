@@ -7,7 +7,7 @@ import pytest
 import restricted
 
 
-def test_user_creation(user):
+def test_user_creation(user: restricted.User):
     """
     Test user creation
     """
@@ -34,7 +34,7 @@ def test_user_deletion():
         pwd.getpwnam(uname)
 
 
-def test_user_group(user):
+def test_user_group(user: restricted.User):
     """
     Test user's group creation
     """

@@ -317,6 +317,7 @@ good-names=i,
            e,
            n,
            fd,
+           fn,
            _
 
 # Include a hint for the correct naming format with invalid-name

@@ -5,6 +5,7 @@ import os
 import pwd
 import logging
 import subprocess
+from typing import Optional
 from . import utils
 from . import consts
 from . import errors
@@ -16,24 +17,20 @@ class User(object):
     """
     A resticrtable user
     """
-    def __init__(self, user=None, group=consts.GROUP_DEFAULT):
-        """
-        :type user: str | None
-        :type group: str
-        """
+    def __init__(self, user: Optional[str] = None, group: str = consts.GROUP_DEFAULT):
         self.user = user or utils.random_str(10)
         self.group = group
 
         if not utils.is_group_exists(group):
-            utils.call_wrapper(['groupadd', group])
+            subprocess.run(['groupadd', group]).check_returncode()
 
-        ret = utils.call_wrapper(['useradd', self.user, '-G', group])
+        ret = subprocess.run(['useradd', self.user, '-G', group]).returncode
 
         if ret == 9:
             raise errors.UserExistsError
         elif ret == 1:
             raise errors.PremissionError
-        
+
         for path in consts.RESTRICTED_BY_DEFAULT:
             self.set_fs_file_premission(path, '---')
 
@@ -43,14 +40,12 @@ class User(object):
     def __del__(self):
         if not getattr(self, '_executed', False):
             return
-        utils.call_wrapper(['userdel', self.user])
+        subprocess.run(['userdel', self.user]).check_returncode()
 
     @property
-    def uid(self):
+    def uid(self) -> int:
         """
         Get the UID of the user
-
-        :rtype: int
         """
         return pwd.getpwnam(self.user)[2]
 
@@ -67,11 +62,6 @@ class User(object):
         :param str path: path to file or directory
         :param str mode: file premission mode
         """
-        # if os.path.isdir(path):
-        #     for root, _, files in os.walk(path):
-        #         for file_ in files:
-        #             self.set_fs_file_premission(os.path.join(root, file_), mode)
-        # else:
         subprocess.check_call(['setfacl', '-m', '{}:{}'.format(self.user, mode), path])
 
 __all__ = ['User']
