@@ -3,8 +3,6 @@ Utilitties
 """
 import random
 import string
-import logging
-import subprocess
 
 
 def random_str(n: str) -> str:
