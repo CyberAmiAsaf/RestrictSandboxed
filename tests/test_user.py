@@ -7,11 +7,10 @@ import pytest
 import restricted
 
 
-def test_user_creation():
+def test_user_creation(user: restricted.User):
     """
     Test user creation
     """
-    user = restricted.User()
     try:
         pwd.getpwnam(user.user)
     except KeyError:
@@ -35,11 +34,10 @@ def test_user_deletion():
         pwd.getpwnam(uname)
 
 
-def test_user_group():
+def test_user_group(user: restricted.User):
     """
     Test user's group creation
     """
-    user = restricted.User()
     assert user.user in grp.getgrnam(user.group).gr_mem
 
 

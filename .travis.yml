@@ -3,8 +3,13 @@ sudo: true
 python: '3.6'
 
 before_install: chmod -R +x scripts
-install: pip install -e .[test]
+install: 
+  - sudo apt update -y && sudo apt install acl -y
+  - pip install -e .[test]
 
+
+before_script:
+  - sudo mount -o remount,acl /
 script:
   - ./scripts/lint
   - sudo -E env PATH=$PATH ./scripts/test -v -rsx

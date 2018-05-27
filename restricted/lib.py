@@ -1,6 +1,8 @@
 """
 Main library file
 """
+import os
+import pwd
 import logging
 import subprocess
 from typing import Optional
@@ -29,12 +31,37 @@ class User(object):
         elif ret == 1:
             raise errors.PremissionError
 
-        logging.info('Created user %s of group %s', self.user, self.group)
+        for path in consts.RESTRICTED_BY_DEFAULT:
+            self.set_fs_file_premission(path, '---')
+
+        logging.info('Created restricted user %s of group %s', self.user, self.group)
         self._executed = True
 
     def __del__(self):
         if not getattr(self, '_executed', False):
             return
         subprocess.run(['userdel', self.user]).check_returncode()
+
+    @property
+    def uid(self) -> int:
+        """
+        Get the UID of the user
+        """
+        return pwd.getpwnam(self.user)[2]
+
+    def setuid(self):
+        """
+        Set the process' UID to the user's UID
+        """
+        os.setuid(self.uid)
+
+    def set_fs_file_premission(self, path, mode='-xr'):
+        """
+        Set file premissions of {path} to be {mode}
+
+        :param str path: path to file or directory
+        :param str mode: file premission mode
+        """
+        subprocess.check_call(['setfacl', '-m', '{}:{}'.format(self.user, mode), path])
 
 __all__ = ['User']
