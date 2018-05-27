@@ -19,6 +19,7 @@ def main(*args):
 
     parser.add_argument('-u', '--user', help='username of the process')
     parser.add_argument('-g', '--group', help='group of the user')
+    parser.add_argument('-k', '--keep-user', action='store_true', help="Don't delete the user after termination")
 
     parser.add_argument('-l', '--level', default='WARNING', type=logging_level, help='Logging level')
 
@@ -30,6 +31,10 @@ def main(*args):
 
     kwargs = {key: getattr(arguments, key) for key in ('group', 'user') if getattr(arguments, key) is not None}
     user = lib.User(**kwargs)
+
+    if arguments.keep_user:
+        user.delete_user = False
+
     subprocess.run(['sudo', '-u', user.user] + arguments.command)
 
 if __name__ == '__main__':

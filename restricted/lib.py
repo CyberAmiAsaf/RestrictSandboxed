@@ -28,14 +28,15 @@ class User(object):
         elif ret == 1:
             raise errors.PremissionError
 
+        logging.debug('Created user %s of group %s', self.user, self.group)
+
         for path in consts.RESTRICTED_BY_DEFAULT:
             self.set_fs_file_premission(path, '---')
 
-        logging.info('Created restricted user %s of group %s', self.user, self.group)
-        self._executed = True
+        self.delete_user = True
 
     def __del__(self):
-        if not getattr(self, '_executed', False):
+        if not getattr(self, 'delete_user', False):
             return
         try:
             subprocess.run(['userdel', self.user]).check_returncode()
@@ -62,6 +63,7 @@ class User(object):
         :param str path: path to file or directory
         :param str mode: file premission mode
         """
-        subprocess.check_call(['setfacl', '-m', '{}:{}'.format(self.user, mode), path])
+        subprocess.run(['setfacl', '-m', f'{self.user}:{mode}', path]).check_returncode()
+        logging.debug('Set file premissions of %s to %s', path, mode)
 
 __all__ = ['User']
