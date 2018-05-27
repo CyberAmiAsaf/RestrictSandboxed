@@ -7,4 +7,4 @@ install: pip install -e .[test]
 
 script:
   - ./scripts/lint
-  - sudo -E env PATH=$PATH ./scripts/test -v
+  - sudo -E env PATH=$PATH ./scripts/test -v -rsx
