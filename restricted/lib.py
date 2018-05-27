@@ -10,9 +10,6 @@ from . import utils
 from . import consts
 from . import errors
 
-logging.basicConfig(format='%(levelname)s [%(asctime)s]: %(message)s', level=logging.DEBUG)
-
-
 class User(object):
     """
     A resticrtable user
@@ -40,7 +37,10 @@ class User(object):
     def __del__(self):
         if not getattr(self, '_executed', False):
             return
-        subprocess.run(['userdel', self.user]).check_returncode()
+        try:
+            subprocess.run(['userdel', self.user]).check_returncode()
+        except subprocess.CalledProcessError:
+            logging.warning('User %s could not be deleted', self.user)
 
     @property
     def uid(self) -> int:
