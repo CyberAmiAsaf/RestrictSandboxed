@@ -34,7 +34,8 @@ class User(object):
         elif ret == 1:
             raise errors.PremissionError
         
-        self.set_fs_file_premission('/', '---')
+        for path in consts.RESTRICTED_BY_DEFAULT:
+            self.set_fs_file_premission(path, '---')
 
         logging.info('Created restricted user %s of group %s', self.user, self.group)
         self._executed = True
@@ -66,11 +67,11 @@ class User(object):
         :param str path: path to file or directory
         :param str mode: file premission mode
         """
-        if os.path.isdir(path):
-            for root, _, files in os.walk(path):
-                for file_ in files:
-                    self.set_fs_file_premission(os.path.join(root, file_), mode)
-        else:
-            subprocess.check_call(['setfacl', '-m', '{}:{}'.format(self.user, mode), path])
+        # if os.path.isdir(path):
+        #     for root, _, files in os.walk(path):
+        #         for file_ in files:
+        #             self.set_fs_file_premission(os.path.join(root, file_), mode)
+        # else:
+        subprocess.check_call(['setfacl', '-m', '{}:{}'.format(self.user, mode), path])
 
 __all__ = ['User']
