@@ -1,5 +1,5 @@
 #!/bin/bash
 . `dirname $0`/util.sh
 initilize
-python -m src $@
+python3 -m src $@
 finalize

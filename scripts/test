@@ -1,5 +1,5 @@
 #!/bin/bash
 . `dirname $0`/util.sh
 initilize
-python -m pytest $@
+python3 -m pytest $@
 finalize

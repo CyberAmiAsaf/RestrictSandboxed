@@ -1,5 +1,5 @@
 #!/bin/bash
 . `dirname $0`/util.sh
 initilize
-python -m pylint src tests tools --rcfile config/pylintrc $@
+python3 -m pylint src tests tools --rcfile config/pylintrc $@
 finalize
