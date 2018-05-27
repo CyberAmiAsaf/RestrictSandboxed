@@ -3,6 +3,7 @@ Main library file
 """
 import logging
 import subprocess
+from typing import Optional
 from . import utils
 from . import consts
 from . import errors
@@ -14,11 +15,7 @@ class User(object):
     """
     A resticrtable user
     """
-    def __init__(self, user=None, group=consts.GROUP_DEFAULT):
-        """
-        :type user: str | None
-        :type group: str
-        """
+    def __init__(self, user: Optional[str] = None, group: str = consts.GROUP_DEFAULT):
         self.user = user or utils.random_str(10)
         self.group = group
 
