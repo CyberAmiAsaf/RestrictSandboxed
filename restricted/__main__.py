@@ -9,10 +9,9 @@ import subprocess
 from typing import Tuple, Callable
 from . import lib
 
-# types
+# types # pylint: disable=invalid-name
 PremissionDescriptor = Tuple[str, Path]
-
-# consts
+# consts # pylint: enable=invalid-name
 PREMISSIONS = {
     'read': 'r',
     'write': 'w',
@@ -20,13 +19,19 @@ PREMISSIONS = {
 }
 
 def logging_level(level: str) -> int:
+    """
+    Return the numeric value of the logging level constant by the name {level}
+    """
     try:
-        return logging._nameToLevel[level.upper()]
+        return logging._nameToLevel[level.upper()]  # pylint: disable=protected-access
     except KeyError:
         raise argparse.ArgumentTypeError(f'No such logging level: {level}')
 
 
 def premission(descriptor: str) -> PremissionDescriptor:
+    """
+    Parse a descriptor of the form '{mode}:{path}'
+    """
     try:
         mode, path = descriptor.split(':')
         path = Path(path).expanduser().resolve()
@@ -35,17 +40,23 @@ def premission(descriptor: str) -> PremissionDescriptor:
 
     if any(c not in PREMISSIONS.values() for c in mode):
         raise argparse.ArgumentTypeError(f"premissions must be one or few of '{''.join(PREMISSIONS.values())}'")
-    
+
     return (mode, path)
 
 
 def premission_mode(mode: str) -> Callable[[str], PremissionDescriptor]:
-    def func(path: str):
+    """
+    Return a type function that get a path and return a PremissionDescriptor({mode}, {path})
+    """
+    def func(path: str) -> PremissionDescriptor:  # pylint: disable=missing-docstring
         return mode, Path(path).expanduser().resolve()
     return func
 
 
 def main(*args):
+    """
+    Main CLI
+    """
     parser = argparse.ArgumentParser(prog='restricted')
 
     parser.add_argument('-l', '--level', default='WARNING', type=logging_level, help='Logging level')
@@ -58,7 +69,7 @@ def main(*args):
 
     prem_group = parser.add_argument_group('premissions')
     prem_group.add_argument(
-        '-p', '--premission',action='append', dest='premissions',
+        '-p', '--premission', action='append', dest='premissions',
         default=[], type=premission, help='add premission')
     for prem, char in PREMISSIONS.items():
         prem_group.add_argument(
