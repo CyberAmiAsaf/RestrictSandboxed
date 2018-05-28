@@ -1,22 +1,60 @@
 """
 Main CLI Interface
 """
+from __future__ import annotations
 import sys
 import argparse
 import logging
 from pathlib import Path
 import subprocess
-from typing import Tuple, Callable
+from functools import partial
+from typing import Union, Callable
 from . import lib
 
-# types # pylint: disable=invalid-name
-PremissionDescriptor = Tuple[str, Path]
 # consts # pylint: enable=invalid-name
 PREMISSIONS = {
     'read': 'r',
     'write': 'w',
     'execute': 'x'
 }
+
+class PremissionDescriptor:
+    """
+    A descriptor of path and its desired premission mode
+    """
+    path: Path
+    mode: str
+
+    def __init__(self, path: Union[str, Path], mode: str):
+        if any(c not in PREMISSIONS.values() for c in mode):
+            raise ValueError(f"premissions must be one or few of '{''.join(PREMISSIONS.values())}'")
+        self.path = Path(path).expanduser().resolve()
+        self.mode = mode
+
+    def __iter__(self):
+        return iter((self.path, self.mode))
+
+    def __repr__(self):
+        return f'{{{self.mode}:{self.path}}}'
+
+    @staticmethod
+    def from_descriptor(descriptor: str) -> PremissionDescriptor:
+        """
+        Parse a descriptor of the form '{mode}:{path}'
+        """
+        try:
+            mode, path = descriptor.split(':')
+        except ValueError:
+            raise ValueError("premission descriptor must be of form 'premission:path'")
+        return PremissionDescriptor(path, mode)
+
+    @staticmethod
+    def partial(*args, **kwargs) -> Callable[..., PremissionDescriptor]:
+        """
+        Define a custom constructor of a descriptor
+        """
+        return partial(PremissionDescriptor, *args, **kwargs)
+
 
 def logging_level(level: str) -> int:
     """
@@ -26,31 +64,6 @@ def logging_level(level: str) -> int:
         return logging._nameToLevel[level.upper()]  # pylint: disable=protected-access
     except KeyError:
         raise argparse.ArgumentTypeError(f'No such logging level: {level}')
-
-
-def premission(descriptor: str) -> PremissionDescriptor:
-    """
-    Parse a descriptor of the form '{mode}:{path}'
-    """
-    try:
-        mode, path = descriptor.split(':')
-        path = Path(path).expanduser().resolve()
-    except ValueError:
-        raise argparse.ArgumentTypeError("premission descriptor must be of form 'premission:path'")
-
-    if any(c not in PREMISSIONS.values() for c in mode):
-        raise argparse.ArgumentTypeError(f"premissions must be one or few of '{''.join(PREMISSIONS.values())}'")
-
-    return (mode, path)
-
-
-def premission_mode(mode: str) -> Callable[[str], PremissionDescriptor]:
-    """
-    Return a type function that get a path and return a PremissionDescriptor({mode}, {path})
-    """
-    def func(path: str) -> PremissionDescriptor:  # pylint: disable=missing-docstring
-        return mode, Path(path).expanduser().resolve()
-    return func
 
 
 def main(*args):
@@ -70,11 +83,11 @@ def main(*args):
     prem_group = parser.add_argument_group('premissions')
     prem_group.add_argument(
         '-p', '--premission', action='append', dest='premissions',
-        default=[], type=premission, help='add premission')
+        default=[], type=PremissionDescriptor.from_descriptor, help='add premission')
     for prem, char in PREMISSIONS.items():
         prem_group.add_argument(
             f'-{char}', f'--{prem}', dest='premissions',
-            action='append', type=premission_mode(char), help=f'add {prem} premission')
+            action='append', type=PremissionDescriptor.partial(mode=char), help=f'add {prem} premission')
 
     arguments = parser.parse_args(args)
 
@@ -86,7 +99,7 @@ def main(*args):
     if arguments.keep_user:
         user.delete_user = False
 
-    for mode, path in arguments.premissions:
+    for path, mode in arguments.premissions:
         user.set_fs_file_premission(path, mode)
 
     subprocess.run(['sudo', '-u', user.user] + arguments.command)
