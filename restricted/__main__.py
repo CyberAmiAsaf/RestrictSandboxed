@@ -4,8 +4,20 @@ Main CLI Interface
 import sys
 import argparse
 import logging
+import pathlib
 import subprocess
+from typing import Tuple, Callable
 from . import lib
+
+# types
+PremissionDescriptor = Tuple[str, pathlib.Path]
+
+# consts
+PREMISSIONS = {
+    'read': 'r',
+    'write': 'w',
+    'execute': 'x'
+}
 
 def logging_level(level: str) -> int:
     try:
@@ -14,16 +26,44 @@ def logging_level(level: str) -> int:
         raise argparse.ArgumentTypeError(f'No such logging level: {level}')
 
 
+def premission(descriptor: str) -> PremissionDescriptor:
+    try:
+        mode, path = descriptor.split(':')
+        path = pathlib.Path(path).expanduser().resolve()
+    except ValueError:
+        raise argparse.ArgumentTypeError("premission descriptor must be of form 'premission:path'")
+
+    if any(c not in PREMISSIONS.values() for c in mode):
+        raise argparse.ArgumentTypeError(f"premissions must be one or few of '{''.join(PREMISSIONS.values())}'")
+    
+    return (mode, path)
+
+
+def premission_mode(mode: str) -> Callable[[str], PremissionDescriptor]:
+    def func(path: str):
+        return mode, pathlib.Path(path).expanduser().resolve()
+    return func
+
+
 def main(*args):
     parser = argparse.ArgumentParser(prog='restricted')
 
-    parser.add_argument('-u', '--user', help='username of the process')
-    parser.add_argument('-g', '--group', help='group of the user')
-    parser.add_argument('-k', '--keep-user', action='store_true', help="Don't delete the user after termination")
-
     parser.add_argument('-l', '--level', default='WARNING', type=logging_level, help='Logging level')
-
     parser.add_argument('command', nargs='+', help='commmand to launch')
+
+    user_group = parser.add_argument_group('user options')
+    user_group.add_argument('-u', '--user', help='username of the process')
+    user_group.add_argument('-g', '--group', help='group of the user')
+    user_group.add_argument('-k', '--keep-user', action='store_true', help="Don't delete the user after termination")
+
+    prem_group = parser.add_argument_group('premissions')
+    prem_group.add_argument(
+        '-p', '--premission',action='append', dest='premissions',
+        default=[], type=premission, help='add premission')
+    for prem, char in PREMISSIONS.items():
+        prem_group.add_argument(
+            f'-{char}', f'--{prem}', dest='premissions',
+            action='append', type=premission_mode(char), help=f'add {prem} premission')
 
     arguments = parser.parse_args(args)
 
@@ -34,6 +74,9 @@ def main(*args):
 
     if arguments.keep_user:
         user.delete_user = False
+
+    for mode, path in arguments.premissions:
+        user.set_fs_file_premission(path, mode)
 
     subprocess.run(['sudo', '-u', user.user] + arguments.command)
 
