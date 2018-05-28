@@ -1,7 +1,6 @@
 """
 Main CLI Interface
 """
-from __future__ import annotations
 import sys
 import argparse
 import logging
@@ -38,7 +37,7 @@ class PremissionDescriptor:
         return f'{{{self.mode}:{self.path}}}'
 
     @staticmethod
-    def from_descriptor(descriptor: str) -> PremissionDescriptor:
+    def from_descriptor(descriptor: str) -> 'PremissionDescriptor':
         """
         Parse a descriptor of the form '{mode}:{path}'
         """
@@ -49,7 +48,7 @@ class PremissionDescriptor:
         return PremissionDescriptor(path, mode)
 
     @staticmethod
-    def partial(*args, **kwargs) -> Callable[..., PremissionDescriptor]:
+    def partial(*args, **kwargs) -> Callable[..., 'PremissionDescriptor']:
         """
         Define a custom constructor of a descriptor
         """
