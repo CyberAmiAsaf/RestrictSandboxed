@@ -5,6 +5,7 @@ import os
 import pwd
 import logging
 import subprocess
+from pathlib import Path
 from typing import Optional
 from . import utils
 from . import consts
@@ -31,7 +32,7 @@ class User(object):
         logging.debug('Created user %s of group %s', self.user, self.group)
 
         for path in consts.RESTRICTED_BY_DEFAULT:
-            self.set_fs_file_premission(path, '---')
+            self.set_fs_file_premission(Path(path), '---')
 
         self.delete_user = True
 
@@ -56,14 +57,14 @@ class User(object):
         """
         os.setuid(self.uid)
 
-    def set_fs_file_premission(self, path, mode='-xr'):
+    def set_fs_file_premission(self, path: Path, mode: str = 'xr'):
         """
         Set file premissions of {path} to be {mode}
 
-        :param str path: path to file or directory
-        :param str mode: file premission mode
+        :param path: path to file or directory
+        :param mode: file premission mode
         """
-        subprocess.run(['setfacl', '-m', f'{self.user}:{mode}', path]).check_returncode()
+        subprocess.run(['setfacl', '-m', f'u:{self.user}:{mode}', path.resolve()]).check_returncode()
         logging.debug('Set file premissions of %s to %s', path, mode)
 
 __all__ = ['User']

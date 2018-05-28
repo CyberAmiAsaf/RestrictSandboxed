@@ -4,13 +4,13 @@ Main CLI Interface
 import sys
 import argparse
 import logging
-import pathlib
+from pathlib import Path
 import subprocess
 from typing import Tuple, Callable
 from . import lib
 
 # types
-PremissionDescriptor = Tuple[str, pathlib.Path]
+PremissionDescriptor = Tuple[str, Path]
 
 # consts
 PREMISSIONS = {
@@ -29,7 +29,7 @@ def logging_level(level: str) -> int:
 def premission(descriptor: str) -> PremissionDescriptor:
     try:
         mode, path = descriptor.split(':')
-        path = pathlib.Path(path).expanduser().resolve()
+        path = Path(path).expanduser().resolve()
     except ValueError:
         raise argparse.ArgumentTypeError("premission descriptor must be of form 'premission:path'")
 
@@ -41,7 +41,7 @@ def premission(descriptor: str) -> PremissionDescriptor:
 
 def premission_mode(mode: str) -> Callable[[str], PremissionDescriptor]:
     def func(path: str):
-        return mode, pathlib.Path(path).expanduser().resolve()
+        return mode, Path(path).expanduser().resolve()
     return func
 
 

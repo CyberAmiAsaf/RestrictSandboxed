@@ -1,6 +1,7 @@
 """
 Pytest configuration
 """
+from pathlib import Path
 import py
 import _pytest
 import pytest
@@ -18,11 +19,10 @@ def user() -> restricted.User:
 
 
 @pytest.fixture
-def tmpfile(request: Request, tmpdir: TempPath) -> TempPath:
+def tmpfile(request: Request, tmpdir: TempPath) -> Path:
     """
     A temporary file
     """
-    fn = tmpdir.join(request.function.__name__ + '.tmp')
-    fn.open('w').close()
-    fn.chmod(511)
+    fn = Path(str(tmpdir.join(request.function.__name__ + '.tmp')))
+    fn.touch(0o777)
     return fn
