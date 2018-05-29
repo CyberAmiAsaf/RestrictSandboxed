@@ -13,6 +13,7 @@ class Server:
         self.socket.bind(addr)
         self.sessions: List[User] = []
         self.requests: List[Request] = []
+        self.buffer = ''
 
     def get_user(self, addr: str, token: str) -> Optional[User]:
         """
@@ -24,7 +25,30 @@ class Server:
         return None
 
     def handle(self, data: str, addr: str) -> Mapping:
-        print(addr, data)
+        if self.buffer:
+            data += self.buffer
+            self.buffer = ''
+        if not data.endswith('}'):
+            *data, self.buffer = data.split('}{')
+            data = '}{'.join(data)
+            if data:
+                if self.buffer:
+                    self.buffer = '{' + self.buffer
+                data += '}'
+        if '}{' in data:
+            data = f"[{data.replace('}{', '},{')}]"
+        if not data:
+            if not self.buffer:
+                return {'status': False, 'return': 'No Data given'}
+            else:
+                return None
+        try:
+            request: Mapping = json.loads(data)
+        except json.decoder.JSONDecodeError:
+            print(data)
+            return {'status': False, 'return': 'No JSON could be parsed'}
+        print(addr, request)
+        return {}
 
     def main(self):
         logging.info(f'Server started at {self.addr}')
@@ -36,7 +60,10 @@ class Server:
             if not addr:
                 logging.info(f'Got data {data!r} from a client with no address')
                 continue
-            response = self.handle(data, addr) or ''
+            data = data.decode()
+            response = self.handle(data, addr)
+            if response is None:
+                continue
             response = json.dumps(response)
             self.socket.sendto(bytes(response, 'ascii'), addr)
     
