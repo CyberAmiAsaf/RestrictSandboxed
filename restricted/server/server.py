@@ -10,6 +10,7 @@ class Server:
     def __init__(self, addr: str):
         self.addr = addr
         self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM | socket.SOCK_NONBLOCK)
+        self.socket.bind(addr)
         self.sessions: List[User] = []
         self.requests: List[Request] = []
 
@@ -26,6 +27,7 @@ class Server:
         print(addr, data)
 
     def main(self):
+        logging.info(f'Server started at {self.addr}')
         while True:
             try:
                 data, addr = self.socket.recvfrom(1024)
@@ -36,5 +38,5 @@ class Server:
                 continue
             response = self.handle(data, addr) or ''
             response = json.dumps(response)
-            self.socket.sendto(response, addr)
+            self.socket.sendto(bytes(response, 'ascii'), addr)
     
