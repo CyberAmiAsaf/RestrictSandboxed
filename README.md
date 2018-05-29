@@ -1,28 +1,38 @@
-# Restrcit
+# Restrcited Sandbox
 [![Build Status](https://img.shields.io/travis/CyberAmiAsaf/DekelYigal-RestricedSandbox/master.svg?style=for-the-badge)](https://travis-ci.org/CyberAmiAsaf/DekelYigal-RestricedSandbox)
 
 Sandboxed processes manager
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes, or for global use in your system.
 
 ### Prerequisites
 
-* Linux
+* POSIX compatible operating system
+* ACL-Enabled file system (btrfs/ext2-4)
+* ACL POSIX Tools (`acl` package)
 * [Python 3.6](https://www.python.org/downloads/)
 
 ### Installing
 
 ```sh
-pip install -e .
-chmod -R +x scripts
+# for global use
+sudo pip3 install .
+# for development use
+pip3 install -e .
 ```
+
+## Running the program
+
+Use the `restricted` command or import the `restricted` python package.
+Note that in order to run the program successfully, the user running the program must have sudo premissions.
 
 ## Running the tests
 
 ```sh
-pip install -e .[test]
+pip3 install -e .[test]
+chmod +x ./scripts
 ./scripts/lint
 sudo ./scripts/test
 ```

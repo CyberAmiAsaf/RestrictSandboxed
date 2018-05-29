@@ -27,7 +27,7 @@ class User(object):
         if ret == 9:
             raise errors.UserExistsError
         elif ret == 1:
-            raise errors.PremissionError
+            raise PermissionError
 
         logging.debug('Created user %s of group %s', self.user, self.group)
 
@@ -64,7 +64,10 @@ class User(object):
         :param path: path to file or directory
         :param mode: file premission mode
         """
-        subprocess.run(['setfacl', '-m', f'u:{self.user}:{mode}', path.resolve()]).check_returncode()
+        try:
+            subprocess.run(['setfacl', '-m', f'u:{self.user}:{mode}', path.resolve()]).check_returncode()
+        except FileNotFoundError:
+            raise RuntimeError('ACL Tools are not present in your host computer')
         logging.debug('Set file premissions of %s to %s', path, mode)
 
 __all__ = ['User']

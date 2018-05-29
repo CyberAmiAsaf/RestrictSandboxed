@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from pathlib import Path
 from setuptools import setup, find_packages
 from io import open
@@ -6,7 +7,7 @@ long_description = (Path(__file__).parent / 'README.md').read_text()
 
 
 setup(
-    name='restrictsandboxed',
+    name='restricted',
     version='0.1',
     description='Sandboxed processes manager',
     long_description=long_description,
@@ -16,7 +17,7 @@ setup(
     author_email='dekelyi@gmail.com',
 
     classifiers=[
-        'Development Status :: 1 - Planning',
+        'Development Status :: 4 - Beta',
 
         'Intended Audience :: Developers',
         'Topic :: System'
@@ -35,6 +36,9 @@ setup(
     platforms=['posix'],
 
     packages=find_packages(exclude=['tests']),
+    scripts=[
+        'scripts/bin/restricted'
+    ],
 
     install_requires=[],
     extras_require={
