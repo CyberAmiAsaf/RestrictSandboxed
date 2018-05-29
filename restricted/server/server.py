@@ -28,7 +28,7 @@ class Server:
             return {'status': False, 'return': 'No Data was given'}
         try:
             request: Mapping = json.loads(data)
-        except json.decoder.JSONDecodeError:
+        except json.JSONDecodeError:
             return {'status': False, 'return': 'No JSON could be parsed'}
         return {'status': True}
 
