@@ -1,10 +1,12 @@
 import json
 import socket
 import logging
+from types import ModuleType
+from typing import List, Tuple, Dict, Optional, Any
 from .user import User
-from typing import List, Tuple, Mapping, Optional
+from .commands import get_command
 
-Request = Tuple[str, Mapping]
+Request = Tuple[str, Dict]
 
 class Server:
     def __init__(self, addr: str):
@@ -23,14 +25,26 @@ class Server:
                 return user
         return None
 
-    def handle(self, data: str, addr: str) -> Mapping:
+    def handle(self, data: str, addr: str) -> Dict:
         if not data:
             return {'status': False, 'return': 'No Data was given'}
         try:
-            request: Mapping = json.loads(data)
+            request: Dict = json.loads(data)
         except json.JSONDecodeError:
             return {'status': False, 'return': 'No JSON could be parsed'}
-        return {'status': True}
+        response: Dict = {}
+        if 'command' not in request:
+            response = {'status': False, 'return': 'No command was given'}
+        else:
+            command: str = request['command']
+            module: Optional[ModuleType] = get_command(command)
+            if not module:
+                response = {'status': False, 'return': 'No such command was found'}
+            else:
+                response = module.main(self, addr, **request.get('args', {}))
+        ret = request.copy()
+        ret.update(response)
+        return ret
 
     def main(self):
         logging.info(f'Server started at {self.addr}')
