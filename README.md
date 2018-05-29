@@ -1,5 +1,4 @@
 # Restricted Sandbox
-[![Build Status](https://img.shields.io/travis/CyberAmiAsaf/DekelYigal-RestricedSandbox/master.svg?style=for-the-badge)](https://travis-ci.org/CyberAmiAsaf/DekelYigal-RestricedSandbox)
 
 Sandboxed processes manager
 
@@ -36,7 +35,3 @@ chmod +x ./scripts
 ./scripts/lint
 sudo ./scripts/test
 ```
-
-## Authors
-
-* Dekel Yigal <dekelyi@gmail.com>
