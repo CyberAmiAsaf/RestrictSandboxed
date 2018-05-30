@@ -4,7 +4,6 @@ Main CLI Interface
 import sys
 import logging
 
-import pexpect
 
 from restricted.__main__ import adopts
 from restricted.server.__main__ import ADDR
@@ -26,20 +25,12 @@ def main(*args):
     for path, mode in arguments.premissions:
         user.set_fs_file_premission(path, mode)
 
-    command = user.run_as(*arguments.command)
-    ps = pexpect.spawn(command[0], command[1:])
-    ps.expect('(?i)password: ')
-    ps.waitnoecho()
-    ps.sendline(user.token)
-    ps.expect('\n')
-    ps.interact()
-    ps.expect(pexpect.EOF)
-    ps.close()
+    ret = user.run_as(*arguments.command)
 
     if not arguments.keep_user:
         user.delete()
 
-    return ps.exitstatus
+    return ret
 
 if __name__ == '__main__':
     sys.exit(main(*sys.argv[1:]))
