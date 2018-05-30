@@ -1,11 +1,15 @@
 """
 Main CLI Interface
 """
+import os
 import sys
 import argparse
 import logging
 import subprocess
+from pathlib import Path
 from typing import Union, Callable
+
+import pexpect
 
 from restricted.__main__ import logging_level, PremissionDescriptor, PREMISSIONS
 from restricted.server.__main__ import ADDR
@@ -45,11 +49,20 @@ def main(*args):
     for path, mode in arguments.premissions:
         user.set_fs_file_premission(path, mode)
 
-    user.setuid()
-    subprocess.run(arguments.command)
+    command = user.run_as(*arguments.command)
+    ps = pexpect.spawn(command[0], command[1:])
+    ps.expect('(?i)password: ')
+    ps.waitnoecho()
+    ps.sendline(user.token)
+    ps.expect('\n')
+    ps.interact()
+    ps.expect(pexpect.EOF)
+    ps.close()
 
     if not arguments.keep_user:
         user.delete()
 
+    return ps.exitstatus
+
 if __name__ == '__main__':
-    main(*sys.argv[1:])
+    sys.exit(main(*sys.argv[1:]))

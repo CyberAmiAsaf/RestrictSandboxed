@@ -13,3 +13,4 @@ class User(_User):
         super().__init__(*args, **kwargs)
         self.addr = addr
         self.token = random_str(8)
+        self.set_password(self.token)

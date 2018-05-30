@@ -23,12 +23,12 @@ class User:
         self.token: str = res['return']['token']
         self.uid: int = res['return']['uid']
 
-    def setuid(self):
-        os.setreuid(self.uid, self.uid)
+    def run_as(self, *command):
+        return ['su', self.user, '-c', ' '.join(command)]
 
     def delete(self):
         self.socket.sendto(protocol.format('delete', token=self.token), self.addr)
-        res = json.loads(socket.recvfrom(1024)[0].decode())
+        res = json.loads(self.socket.recvfrom(1024)[0].decode())
         if not res['status']:
             raise Exception(res['return'])
 
@@ -37,6 +37,6 @@ class User:
         if mode:
             kwargs['mode'] = mode
         self.socket.sendto(protocol.format('set_fs_file_premission', token=self.token, path=path, **kwargs), self.addr)
-        res = json.loads(socket.recvfrom(1024)[0].decode())
+        res = json.loads(self.socket.recvfrom(1024)[0].decode())
         if not res['status']:
             raise Exception(res['return'])
