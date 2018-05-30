@@ -3,6 +3,7 @@ Commands mechanism for the server
 """
 import os
 import importlib
+from pathlib import Path
 from types import ModuleType
 from typing import Generator, Optional
 
@@ -11,10 +12,10 @@ def list_commands() -> Generator[str, None, None]:
     """
     Generate a list of all available commands
     """
-    for entry in os.scandir():
+    for entry in os.scandir(Path(__file__).parent):
         entry: os.DirEntry = entry
-        if entry.is_file() and entry.name.endswith('.py'):
-            yield entry.name
+        if entry.is_file() and entry.name.endswith('.py') and not entry.name.startswith('_'):
+            yield entry.name[:-3]
 
 
 def get_command(command: str) -> Optional[ModuleType]:
