@@ -65,9 +65,9 @@ def logging_level(level: str) -> int:
         raise argparse.ArgumentTypeError(f'No such logging level: {level}')
 
 
-def main(*args):
+def adopts() -> argparse.ArgumentParser:
     """
-    Main CLI
+    Adopt arguments and return a parser
     """
     parser = argparse.ArgumentParser(prog='restricted')
 
@@ -87,7 +87,14 @@ def main(*args):
         prem_group.add_argument(
             f'-{char}', f'--{prem}', dest='premissions',
             action='append', type=PremissionDescriptor.partial(mode=char), help=f'add {prem} premission')
+    return parser
 
+
+def main(*args):
+    """
+    Main CLI
+    """
+    parser = adopts()
     arguments = parser.parse_args(args)
 
     logging.getLogger().setLevel(arguments.level)

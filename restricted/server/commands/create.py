@@ -1,3 +1,6 @@
+"""
+Create a user
+"""
 from typing import Optional, Dict
 from restricted import UserExistsError
 from ..user import User

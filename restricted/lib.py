@@ -37,9 +37,19 @@ class User(object):
         self.set_password(self.user)
 
     def set_password(self, password: str):
-        subprocess.run(['passwd', self.user], input=f'{password}\n{password}\n'.encode(), stdout=subprocess.DEVNULL).check_returncode()
+        """
+        Set the user password
+        """
+        subprocess.run(
+            ['passwd', self.user],
+            input=f'{password}\n{password}\n'.encode(),
+            stdout=subprocess.DEVNULL
+        ).check_returncode()
 
     def delete(self):
+        """
+        Delete the user
+        """
         try:
             subprocess.run(['userdel', self.user]).check_returncode()
         except subprocess.CalledProcessError:
