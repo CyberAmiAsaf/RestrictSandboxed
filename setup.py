@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-import os
+from os import fspath
 from pathlib import Path
 from setuptools import setup, find_packages
 from io import open
 
-long_description = (Path(__file__).parent / 'README.md').read_text()
+DIR = Path(__file__).parent
+BIN_DIR = DIR / 'scripts' / 'bin'
+long_description = (DIR / 'README.md').read_text()
 
 
 setup(
@@ -37,7 +39,7 @@ setup(
     platforms=['posix'],
 
     packages=find_packages(exclude=['tests']),
-    scripts=os.listdir('scripts/bin/'),
+    scripts=[fspath(p) for p in BIN_DIR.iterdir()],
 
     install_requires=['pexpect'],
     extras_require={
