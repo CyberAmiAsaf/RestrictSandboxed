@@ -34,11 +34,7 @@ class User(object):
         for path in consts.RESTRICTED_BY_DEFAULT:
             self.set_fs_file_premission(Path(path), '---')
 
-        self.delete_user = True
-
-    def __del__(self):
-        if not getattr(self, 'delete_user', False):
-            return
+    def delete(self):
         try:
             subprocess.run(['userdel', self.user]).check_returncode()
         except subprocess.CalledProcessError:

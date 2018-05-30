@@ -95,13 +95,13 @@ def main(*args):
     kwargs = {key: getattr(arguments, key) for key in ('group', 'user') if getattr(arguments, key) is not None}
     user = lib.User(**kwargs)
 
-    if arguments.keep_user:
-        user.delete_user = False
-
     for path, mode in arguments.premissions:
         user.set_fs_file_premission(path, mode)
 
     subprocess.run(['sudo', '-u', user.user] + arguments.command)
+
+    if not arguments.keep_user:
+        user.delete()
 
 if __name__ == '__main__':
     main(*sys.argv[1:])
