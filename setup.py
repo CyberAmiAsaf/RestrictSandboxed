@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 from pathlib import Path
 from setuptools import setup, find_packages
 from io import open
@@ -36,9 +37,7 @@ setup(
     platforms=['posix'],
 
     packages=find_packages(exclude=['tests']),
-    scripts=[
-        'scripts/bin/restricted'
-    ],
+    scripts=os.listdir('scripts/bin/'),
 
     install_requires=['pexpect'],
     extras_require={
