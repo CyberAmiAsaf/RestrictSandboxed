@@ -10,9 +10,6 @@ from typing import List, Tuple, Dict, Optional
 from .user import User
 from .commands import get_command
 
-# types # pylint: disable=invalid-name
-Request = Tuple[str, Dict]
-# pylint: enable=invalid-name
 
 class Server:
     """
@@ -24,7 +21,6 @@ class Server:
         self.socket.bind(addr)
         os.chmod(addr, 0o777)
         self.sessions: List[User] = []
-        self.requests: List[Request] = []
 
     def get_user(self, addr: str, token: str) -> Optional[User]:
         """
