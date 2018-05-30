@@ -43,7 +43,8 @@ class User(object):
         subprocess.run(
             ['passwd', self.user],
             input=f'{password}\n{password}\n'.encode(),
-            stdout=subprocess.DEVNULL
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
         ).check_returncode()
 
     def delete(self):
