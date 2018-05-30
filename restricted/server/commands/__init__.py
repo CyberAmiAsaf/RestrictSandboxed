@@ -1,3 +1,6 @@
+"""
+Commands mechanism for the server
+"""
 import os
 import importlib
 from types import ModuleType

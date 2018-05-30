@@ -1,14 +1,22 @@
+"""
+Server implementation
+"""
 import json
 import socket
 import logging
 from types import ModuleType
-from typing import List, Tuple, Dict, Optional, Any
+from typing import List, Tuple, Dict, Optional
 from .user import User
 from .commands import get_command
 
+# types # pylint: disable=invalid-name
 Request = Tuple[str, Dict]
+# pylint: enable=invalid-name
 
 class Server:
+    """
+    Server
+    """
     def __init__(self, addr: str):
         self.addr = addr
         self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM | socket.SOCK_NONBLOCK)
@@ -26,6 +34,9 @@ class Server:
         return None
 
     def handle(self, data: str, addr: str) -> Dict:
+        """
+        Handle a message
+        """
         if not data:
             return {'status': False, 'return': 'No Data was given'}
         try:
@@ -47,6 +58,9 @@ class Server:
         return ret
 
     def main(self):
+        """
+        Main loop
+        """
         logging.info(f'Server started at {self.addr}')
         while True:
             try:

@@ -10,7 +10,7 @@ from functools import partial
 from typing import Union, Callable
 from . import lib
 
-# consts # pylint: enable=invalid-name
+# consts
 PREMISSIONS = {
     'read': 'r',
     'write': 'w',
