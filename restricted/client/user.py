@@ -1,4 +1,5 @@
 import json
+import pexpect
 from pathlib import Path
 from typing import Optional
 from . import protocol
@@ -22,11 +23,23 @@ class User:
         self.token: str = res['return']['token']
         self.uid: int = res['return']['uid']
 
-    def run_as(self, *command):
+    def run_as(self, *command: str) -> int:
         """
-        Wrap a command to run as the user
+        Run a command as the user
+
+        :return: return code
         """
-        return ['su', self.user, '-c', ' '.join(command)]
+        command = ['su', self.user, '-c', ' '.join(command)]
+        ps = pexpect.spawn(command[0], command[1:])
+        ps.expect('(?i)password: ')
+        ps.waitnoecho()
+        ps.sendline(self.token)
+        ps.expect('\n')
+        ps.interact()
+        ps.expect(pexpect.EOF)
+        ps.close()
+
+        return ps.exitstatus
 
     def delete(self):
         """
