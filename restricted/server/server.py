@@ -6,7 +6,7 @@ import json
 import socket
 import logging
 from types import ModuleType
-from typing import List, Tuple, Dict, Optional
+from typing import List, Dict, Optional
 from .user import User
 from .commands import get_command
 

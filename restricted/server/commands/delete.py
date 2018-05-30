@@ -1,5 +1,7 @@
+"""
+Delete a User
+"""
 from typing import Dict
-from ..user import User
 from ..server import Server
 
 

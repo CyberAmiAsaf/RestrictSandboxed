@@ -1,6 +1,8 @@
+"""
+Set filesystem premissions
+"""
 from pathlib import Path
 from typing import Optional, Dict
-from ..user import User
 from ..server import Server
 
 

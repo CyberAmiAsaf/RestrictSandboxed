@@ -1,4 +1,3 @@
-import os
 import json
 from pathlib import Path
 from typing import Optional
@@ -24,15 +23,24 @@ class User:
         self.uid: int = res['return']['uid']
 
     def run_as(self, *command):
+        """
+        Wrap a command to run as the user
+        """
         return ['su', self.user, '-c', ' '.join(command)]
 
     def delete(self):
+        """
+        Delete the user
+        """
         self.socket.sendto(protocol.format('delete', token=self.token), self.addr)
         res = json.loads(self.socket.recvfrom(1024)[0].decode())
         if not res['status']:
             raise Exception(res['return'])
 
     def set_fs_file_premission(self, path: Path, mode: Optional[str] = None):
+        """
+        Set filesystem premissions
+        """
         kwargs = {}
         if mode:
             kwargs['mode'] = mode
