@@ -4,21 +4,21 @@ from ..user import User
 from ..server import Server
 
 
-def main(server: Server, addr: str, uname: Optional[str] = None, group: Optional[str] = None) -> Dict:
+def main(server: Server, addr: str, user: Optional[str] = None, group: Optional[str] = None) -> Dict:
     kwargs = {
-        'user': uname,
+        'user': user,
         'group': group
     }
     kwargs = {key: val for key, val in kwargs.items() if val}
     try:
-        user = User(addr, **kwargs)
+        usr = User(addr, **kwargs)
     except UserExistsError:
         return {'status': False, 'return': 'User already exists'}
-    server.sessions.append(user)
+    server.sessions.append(usr)
     return {'status': True, 'return': {
-        'user': user.user,
-        'group': user.group,
-        'uid': user.uid,
-        'token': user.token
+        'user': usr.user,
+        'group': usr.group,
+        'uid': usr.uid,
+        'token': usr.token
     }}
     
