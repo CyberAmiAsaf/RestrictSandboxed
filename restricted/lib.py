@@ -34,6 +34,11 @@ class User(object):
         for path in consts.RESTRICTED_BY_DEFAULT:
             self.set_fs_file_premission(Path(path), '---')
 
+        self.set_password(self.user)
+
+    def set_password(self, password: str):
+        subprocess.run(['passwd', self.user], input=f'{password}\n{password}\n'.encode(), stdout=subprocess.DEVNULL).check_returncode()
+
     def delete(self):
         try:
             subprocess.run(['userdel', self.user]).check_returncode()

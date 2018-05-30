@@ -50,7 +50,10 @@ class Server:
             if not module:
                 response = {'status': False, 'return': 'No such command was found'}
             else:
-                response = module.main(self, addr, **request.get('args', {}))
+                kwargs = request.get('args', {})
+                if 'token' in request:
+                    kwargs['token'] = request['token']
+                response = module.main(self, addr, **kwargs)
         ret = request.copy()
         ret.update(response)
         return ret
