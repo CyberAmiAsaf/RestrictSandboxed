@@ -40,7 +40,7 @@ setup(
         'scripts/bin/restricted'
     ],
 
-    install_requires=[],
+    install_requires=['pexpect'],
     extras_require={
         'test': ['pylint', 'pytest'],
     },
