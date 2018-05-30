@@ -1,6 +1,7 @@
 """
 Server implementation
 """
+import os
 import json
 import socket
 import logging
@@ -21,6 +22,7 @@ class Server:
         self.addr = addr
         self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM | socket.SOCK_NONBLOCK)
         self.socket.bind(addr)
+        os.chmod(addr, 0o777)
         self.sessions: List[User] = []
         self.requests: List[Request] = []
 
