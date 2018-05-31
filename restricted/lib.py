@@ -34,11 +34,23 @@ class User(object):
         for path in consts.RESTRICTED_BY_DEFAULT:
             self.set_fs_file_premission(Path(path), '---')
 
-        self.delete_user = True
+        self.set_password(self.user)
 
-    def __del__(self):
-        if not getattr(self, 'delete_user', False):
-            return
+    def set_password(self, password: str):
+        """
+        Set the user password
+        """
+        subprocess.run(
+            ['passwd', self.user],
+            input=f'{password}\n{password}\n'.encode(),
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        ).check_returncode()
+
+    def delete(self):
+        """
+        Delete the user
+        """
         try:
             subprocess.run(['userdel', self.user]).check_returncode()
         except subprocess.CalledProcessError:

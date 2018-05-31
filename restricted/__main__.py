@@ -10,7 +10,7 @@ from functools import partial
 from typing import Union, Callable
 from . import lib
 
-# consts # pylint: enable=invalid-name
+# consts
 PREMISSIONS = {
     'read': 'r',
     'write': 'w',
@@ -65,9 +65,9 @@ def logging_level(level: str) -> int:
         raise argparse.ArgumentTypeError(f'No such logging level: {level}')
 
 
-def main(*args):
+def adopts() -> argparse.ArgumentParser:
     """
-    Main CLI
+    Adopt arguments and return a parser
     """
     parser = argparse.ArgumentParser(prog='restricted')
 
@@ -87,7 +87,14 @@ def main(*args):
         prem_group.add_argument(
             f'-{char}', f'--{prem}', dest='premissions',
             action='append', type=PremissionDescriptor.partial(mode=char), help=f'add {prem} premission')
+    return parser
 
+
+def main(*args):
+    """
+    Main CLI
+    """
+    parser = adopts()
     arguments = parser.parse_args(args)
 
     logging.getLogger().setLevel(arguments.level)
@@ -95,13 +102,13 @@ def main(*args):
     kwargs = {key: getattr(arguments, key) for key in ('group', 'user') if getattr(arguments, key) is not None}
     user = lib.User(**kwargs)
 
-    if arguments.keep_user:
-        user.delete_user = False
-
     for path, mode in arguments.premissions:
         user.set_fs_file_premission(path, mode)
 
     subprocess.run(['sudo', '-u', user.user] + arguments.command)
+
+    if not arguments.keep_user:
+        user.delete()
 
 if __name__ == '__main__':
     main(*sys.argv[1:])
