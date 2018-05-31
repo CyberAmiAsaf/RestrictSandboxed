@@ -14,7 +14,10 @@ class User:
         args = {key: val for key, val in args.items() if val}
         self.addr = addr
         self.socket = protocol.create_socket()
-        self.socket.sendto(protocol.format('create', **args), addr)
+        try:
+            self.socket.sendto(protocol.format('create', **args), addr)
+        except FileNotFoundError:
+            raise RuntimeError('Could not connect to server')
         res = json.loads(self.socket.recvfrom(1024)[0].decode())
         if not res['status']:
             raise Exception(res['return'])
