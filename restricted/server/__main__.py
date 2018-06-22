@@ -5,10 +5,11 @@ import os
 import sys
 import fcntl
 import logging
+from pathlib import Path
 from .server import Server
 
-ADDR = '/tmp/restricted.socket'
-PID_FILE = '/tmp/restricted.pid'
+ADDR = Path('/tmp/restricted.socket')
+PID_FILE = Path('/tmp/restricted.pid')
 
 
 def check_sudo():
@@ -27,7 +28,7 @@ def main():
     """
     logging.getLogger().setLevel(logging.INFO)
     check_sudo()
-    with open(PID_FILE, 'w+') as fd:
+    with PID_FILE.open('w+') as fd:
         try:
             fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
@@ -39,7 +40,8 @@ def main():
             pass
         finally:
             fcntl.flock(fd, fcntl.LOCK_UN)
-            os.unlink(ADDR)
+            ADDR.unlink()
+    PID_FILE.unlink()
 
 
 if __name__ == '__main__':

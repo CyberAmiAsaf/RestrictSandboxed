@@ -5,6 +5,7 @@ import os
 import json
 import socket
 import logging
+from pathlib import Path
 from types import ModuleType
 from typing import List, Dict, Optional
 from .user import User
@@ -15,11 +16,11 @@ class Server:
     """
     Server
     """
-    def __init__(self, addr: str):
+    def __init__(self, addr: Path):
         self.addr = addr
         self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM | socket.SOCK_NONBLOCK)
-        self.socket.bind(addr)
-        os.chmod(addr, 0o777)
+        self.socket.bind(os.fspath(addr))
+        addr.chmod(0o777)
         self.sessions: List[User] = []
 
     def get_user(self, addr: str, token: str) -> Optional[User]:
