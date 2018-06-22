@@ -95,9 +95,11 @@ class Server:
                 for user in self.get_users_by_address(addr):
                     user: User
                     user.delete()
+                    self.sessions.remove(user)
 
     def close(self):
         for user in self.sessions:
             user: User
             user.delete()
+            self.sessions.remove(user)
     
