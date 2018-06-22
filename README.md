@@ -4,7 +4,7 @@ Sandboxed processes manager
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes, or for global use in your system.
+These instructions will get you a copy of the project up and running on your local machine for global use in your system.
 
 ### Prerequisites
 
@@ -16,10 +16,7 @@ These instructions will get you a copy of the project up and running on your loc
 ### Installing
 
 ```sh
-# for global use
 sudo pip3 install .
-# for development use
-sudo pip3 install -e .
 ```
 
 ## Running the program
@@ -27,11 +24,5 @@ sudo pip3 install -e .
 Use the `restricted` command or import the `restricted` python package.
 Note that in order to run the program successfully, the user running the program must have sudo premissions.
 
-## Running the tests
-
-```sh
-pip3 install -e .[test]
-chmod +x ./scripts
-./scripts/lint
-sudo ./scripts/test
-```
+One can use the networked framework of the program, via the `restricted-server` command and the `restricted-client` command, or with the `restricted.client` package.
+Note that the server must be run as root as well.

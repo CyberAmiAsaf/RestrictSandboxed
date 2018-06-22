@@ -1,5 +1,0 @@
-#!/bin/bash
-. `dirname $0`/util.sh
-initilize
-python3 -m pylint restricted tests tools --rcfile config/pylintrc $@
-finalize
