@@ -7,7 +7,7 @@ import socket
 import logging
 from pathlib import Path
 from types import ModuleType
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Iterable
 from .user import User
 from .commands import get_command
 
@@ -23,12 +23,21 @@ class Server:
         addr.chmod(0o777)
         self.sessions: List[User] = []
 
+    def get_users_by_address(self, addr: str) -> Iterable[User]:
+        """
+        Get all users in {addr} session
+        """
+        for user in self.sessions:
+            if user.addr == addr:
+                yield user
+
+
     def get_user(self, addr: str, token: str) -> Optional[User]:
         """
         Get the user represented by {token} in {addr} session
         """
-        for user in self.sessions:
-            if user.addr == addr and user.token == token:
+        for user in self.get_users_by_address(addr):
+            if user.token == token:
                 return user
         return None
 
@@ -55,6 +64,8 @@ class Server:
                 if 'token' in request:
                     kwargs['token'] = request['token']
                 response = module.main(self, addr, **kwargs)
+                if response is None:
+                    response = {'status': True}
         ret = request.copy()
         ret.update(response)
         return ret
@@ -77,5 +88,16 @@ class Server:
             if response is None:
                 continue
             response = json.dumps(response)
-            self.socket.sendto(response.encode(), addr)
+            try:
+                self.socket.sendto(response.encode(), addr)
+            except ConnectionError as err:
+                logging.info(f'{addr}: {err}')
+                for user in self.get_users_by_address(addr):
+                    user: User
+                    user.delete()
+
+    def close(self):
+        for user in self.sessions:
+            user: User
+            user.delete()
     

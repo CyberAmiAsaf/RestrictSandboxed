@@ -14,5 +14,4 @@ def main(server: Server, addr: str, token: str, path: str, mode: Optional[str] =
     if mode:
         kwargs['mode'] = mode
     user.set_fs_file_premission(Path(path), **kwargs)
-    return {'status': True}
     

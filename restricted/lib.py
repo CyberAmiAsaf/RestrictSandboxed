@@ -29,7 +29,7 @@ class User(object):
         elif ret == 1:
             raise PermissionError
 
-        logging.debug('Created user %s of group %s', self.user, self.group)
+        logging.info('Created user %s of group %s', self.user, self.group)
 
         for path in consts.RESTRICTED_BY_DEFAULT:
             self.set_fs_file_premission(Path(path), '---')
@@ -53,6 +53,7 @@ class User(object):
         """
         try:
             subprocess.run(['userdel', self.user]).check_returncode()
+            logging.info(f'User {self.user} deleted')
         except subprocess.CalledProcessError:
             logging.warning('User %s could not be deleted', self.user)
 
@@ -80,6 +81,6 @@ class User(object):
             subprocess.run(['setfacl', '-m', f'u:{self.user}:{mode}', path.resolve()]).check_returncode()
         except FileNotFoundError:
             raise RuntimeError('ACL Tools are not present in your host computer')
-        logging.debug('Set file premissions of %s to %s', path, mode)
+        logging.info('Set file premissions of %s to %s', path, mode)
 
 __all__ = ['User']

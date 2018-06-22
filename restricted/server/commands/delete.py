@@ -11,5 +11,4 @@ def main(server: Server, addr: str, token: str) -> Dict:
         return {'status': False, 'return': 'No user found'}
     user.delete()
     server.sessions.remove(user)
-    return {'status': True}
     
