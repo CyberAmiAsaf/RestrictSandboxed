@@ -1,3 +1,4 @@
+import os
 import json
 import pexpect
 from pathlib import Path
@@ -60,7 +61,7 @@ class User:
         kwargs = {}
         if mode:
             kwargs['mode'] = mode
-        self.socket.sendto(protocol.format('set_fs_file_premission', token=self.token, path=path, **kwargs), self.addr)
+        self.socket.sendto(protocol.format('set_fs_file_premission', token=self.token, path=os.fspath(path), **kwargs), self.addr)
         res = json.loads(self.socket.recvfrom(1024)[0].decode())
         if not res['status']:
             raise Exception(res['return'])

@@ -1,6 +1,7 @@
 """
 Main CLI Interface
 """
+import os
 import sys
 import logging
 
@@ -20,7 +21,7 @@ def main(*args):
         logging.getLogger().setLevel(arguments.level)
 
         kwargs = {key: getattr(arguments, key) for key in ('group', 'user') if getattr(arguments, key) is not None}
-        user = User(ADDR, **kwargs)
+        user = User(os.fspath(ADDR), **kwargs)
 
         for path, mode in arguments.premissions:
             user.set_fs_file_premission(path, mode)

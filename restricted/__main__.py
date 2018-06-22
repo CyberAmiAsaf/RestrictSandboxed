@@ -16,6 +16,7 @@ PREMISSIONS = {
     'write': 'w',
     'execute': 'x'
 }
+PREMISSIONS_SYMS = tuple(PREMISSIONS.values()) + ('-',)
 
 class PremissionDescriptor:
     """
@@ -25,7 +26,7 @@ class PremissionDescriptor:
     mode: str
 
     def __init__(self, path: Union[str, Path], mode: str):
-        if any(c not in PREMISSIONS.values() for c in mode):
+        if any(c not in PREMISSIONS_SYMS for c in mode):
             raise ValueError(f"premissions must be one or few of '{''.join(PREMISSIONS.values())}'")
         self.path = Path(path).expanduser().resolve()
         self.mode = mode
@@ -36,23 +37,37 @@ class PremissionDescriptor:
     def __repr__(self):
         return f'{{{self.mode}:{self.path}}}'
 
-    @staticmethod
-    def from_descriptor(descriptor: str) -> 'PremissionDescriptor':
+    @classmethod
+    def from_descriptor(cls, descriptor: str) -> 'PremissionDescriptor':
         """
         Parse a descriptor of the form '{mode}:{path}'
+
+        :raise ValueError: parsing error
         """
         try:
             mode, path = descriptor.split(':')
         except ValueError:
             raise ValueError("premission descriptor must be of form 'premission:path'")
-        return PremissionDescriptor(path, mode)
+        return cls(path, mode)
 
-    @staticmethod
-    def partial(*args, **kwargs) -> Callable[..., 'PremissionDescriptor']:
+    @classmethod
+    def from_argparse(cls, descriptor: str) -> 'PremissionDescriptor':
+        """
+        Parse a descriptor of the form '{mode}:{path}'
+
+        :raise argparse.ArgumentTypeError: parsing error
+        """
+        try:
+            return cls.from_descriptor(descriptor)
+        except Exception as err:
+            raise argparse.ArgumentTypeError(err) from err
+
+    @classmethod
+    def partial(cls, *args, **kwargs) -> Callable[..., 'PremissionDescriptor']:
         """
         Define a custom constructor of a descriptor
         """
-        return partial(PremissionDescriptor, *args, **kwargs)
+        return partial(cls, *args, **kwargs)
 
 
 def logging_level(level: str) -> int:
@@ -82,7 +97,7 @@ def adopts() -> argparse.ArgumentParser:
     prem_group = parser.add_argument_group('premissions')
     prem_group.add_argument(
         '-p', '--premission', action='append', dest='premissions',
-        default=[], type=PremissionDescriptor.from_descriptor, help='add premission')
+        default=[], type=PremissionDescriptor.from_argparse, help='add premission of form {mode}:{path}')
     for prem, char in PREMISSIONS.items():
         prem_group.add_argument(
             f'-{char}', f'--{prem}', dest='premissions',
