@@ -5,7 +5,6 @@ from setuptools import setup, find_packages
 from io import open
 
 DIR = Path(__file__).parent
-BIN_DIR = DIR / 'scripts' / 'bin'
 long_description = (DIR / 'README.md').read_text()
 
 
@@ -39,7 +38,13 @@ setup(
     platforms=['posix'],
 
     packages=find_packages(exclude=['tests']),
-    scripts=[fspath(p) for p in BIN_DIR.iterdir()],
+    entry_points={
+        'console_scripts': [
+            'restricted=restricted.__main__:main_cmd',
+            'restricted-client=restricted.client.__main__:main_cmd',
+            'restricted-server=restricted.server.__main__:main'
+        ]
+    },
 
     install_requires=['pexpect'],
     extras_require={

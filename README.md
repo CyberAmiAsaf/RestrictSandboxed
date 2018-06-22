@@ -19,7 +19,7 @@ These instructions will get you a copy of the project up and running on your loc
 # for global use
 sudo pip3 install .
 # for development use
-pip3 install -e .
+sudo pip3 install -e .
 ```
 
 ## Running the program
