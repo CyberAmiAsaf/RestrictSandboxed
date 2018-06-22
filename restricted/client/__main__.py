@@ -4,7 +4,6 @@ Main CLI Interface
 import sys
 import logging
 
-
 from restricted.__main__ import adopts
 from restricted.server.__main__ import ADDR
 from .user import User
@@ -36,5 +35,9 @@ def main(*args):
         print(f'Error: {err}')
         return 1
 
-if __name__ == '__main__':
+
+def main_cmd():
     sys.exit(main(*sys.argv[1:]))
+
+if __name__ == '__main__':
+    main_cmd()

@@ -110,5 +110,9 @@ def main(*args):
     if not arguments.keep_user:
         user.delete()
 
-if __name__ == '__main__':
+
+def main_cmd():
     main(*sys.argv[1:])
+
+if __name__ == '__main__':
+    main_cmd()
