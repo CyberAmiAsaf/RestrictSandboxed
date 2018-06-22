@@ -10,7 +10,7 @@ long_description = (DIR / 'README.md').read_text()
 
 setup(
     name='restricted',
-    version='0.1',
+    version='1',
     description='Sandboxed processes manager',
     long_description=long_description,
 
@@ -37,7 +37,7 @@ setup(
     keywords='sandbox restricted jail',
     platforms=['posix'],
 
-    packages=find_packages(exclude=['tests']),
+    packages=find_packages(),
     entry_points={
         'console_scripts': [
             'restricted=restricted.__main__:main_cmd',
@@ -47,7 +47,4 @@ setup(
     },
 
     install_requires=['pexpect'],
-    extras_require={
-        'test': ['pylint', 'pytest'],
-    },
 )
